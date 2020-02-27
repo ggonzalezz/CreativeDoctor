@@ -16,6 +16,8 @@ Route::post('/specialties', 'SpecialtyController@store');
 Route::put('/specialties/{specialty}', 'SpecialtyController@update');
 Route::delete('/specialties/{specialty}', 'SpecialtyController@destroy');
 
+//Medicos
+Route::resource('doctors','DoctorController');
 
 
 
