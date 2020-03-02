@@ -21,7 +21,9 @@ class CalendarioController extends Controller
             'Sabado',
             'Domingo'
         ];
-        return view('calendario', compact('days'));
+        $workDays = WorkDay::where('user_id', auth()->id())->get();
+        //dd($workDays->toArray());
+        return view('calendario', compact('workDays','days'));
     }
     //
     public function store(Request $request)

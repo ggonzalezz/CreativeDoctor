@@ -34,12 +34,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                  @foreach ($days as $key => $day)
+                  @foreach ($workDays as $key => $workDay)
                   <tr>
-                  <th> {{ $day }}</th>
+                  <th> {{ $days[$key] }}</th>
                   <td>
                     <label class="custom-toggle">
-                    <input type="checkbox" name="active[]" checked value="{{ $key }}">
+                    <input type="checkbox" name="active[]"  value="{{ $key }}"
+                    @if($workDay->active) checked @endif>
                         <span class="custom-toggle-slider rounded-circle"></span>
                       </label>
                   </td>
