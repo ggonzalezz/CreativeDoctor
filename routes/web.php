@@ -29,6 +29,7 @@ Route::middleware(['auth', 'doctor'])->namespace('Doctor')->group(function(){
     // Comando laravel para crear un controlador
     // php artisan make:controller Doctor/CalendarioController
     Route::get('/calendario', 'CalendarioController@edit');
+    Route::post('/calendario', 'CalendarioController@store');
 
 
 });
