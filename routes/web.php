@@ -22,3 +22,13 @@ Route::middleware(['auth', 'admin'])->namespace('Admin')->group(function(){
     Route::resource('patients','PatientController');
 
 });
+ 
+//Rutas para la vista doctores
+Route::middleware(['auth', 'doctor'])->namespace('Doctor')->group(function(){
+    //Doctores
+    // Comando laravel para crear un controlador
+    // php artisan make:controller Doctor/CalendarioController
+    Route::get('/calendario', 'CalendarioController@edit');
+
+
+});

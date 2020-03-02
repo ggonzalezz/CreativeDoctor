@@ -28,7 +28,7 @@
     </li>
     @elseif (auth()->user()->role == 'doctor')
     <li class="nav-item">
-        <a class="nav-link" href="/home">
+        <a class="nav-link" href="/calendario">
             <i class="ni ni-time-alarm text-primary"></i> Horarios
         </a>
     </li>
