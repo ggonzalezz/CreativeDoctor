@@ -6,22 +6,35 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use App\WorkDay;
+use Carbon\Carbon;
 
 class CalendarioController extends Controller
 {
+    private $days = [
+        'Lunes',
+        'Martes',
+        'Miercoles',
+        'Jueves',
+        'Viernes',
+        'Sabado',
+        'Domingo'
+    ];
     //
     public function edit()
     {
-        $days = [
-            'Lunes',
-            'Martes',
-            'Miercoles',
-            'Jueves',
-            'Viernes',
-            'Sabado',
-            'Domingo'
-        ];
+        
         $workDays = WorkDay::where('user_id', auth()->id())->get();
+        //dd($workDays->toArray());
+        $workDays->map(function($workDay)
+        {
+            $workDay->morning_start =(new Carbon($workDay->morning_start))->format('g:i A');
+            $workDay->morning_end =(new Carbon($workDay->morning_end))->format('g:i A');
+            $workDay->afternoon_start =(new Carbon($workDay->afternoon_start))->format('g:i A');
+            $workDay->afternoon_end =(new Carbon($workDay->afternoon_end))->format('g:i A');
+
+            return $workDay;
+        });
+        $days = $this->days;
         //dd($workDays->toArray());
         return view('calendario', compact('workDays','days'));
     }
@@ -35,7 +48,17 @@ class CalendarioController extends Controller
         $afternoon_end = $request->input('afternoon_end');
 
         //dd($request->all());
-        for($i=0; $i<7; ++$i)
+        // capturar errores tecnicos
+        $errors = [];
+        for($i=0; $i<7; ++$i){
+        if($morning_start[$i] > $morning_end[$i])
+        {
+            $errors[]= 'Las horas del turno de la mañana afectan el dia '. $this->days[$i];
+        }
+        if($morning_start[$i] > $morning_end[$i])
+        {
+            $errors[]= 'Las horas del turno de la tarde afectan el dia '. $this->days[$i];
+        }
         WorkDay::updateOrCreate(
             [
                 'day' => $i,
@@ -47,9 +70,12 @@ class CalendarioController extends Controller
                 'morning_end' =>$morning_end[$i],
                 'afternoon_start' =>$afternoon_start[$i],
                 'afternoon_end' => $afternoon_end[$i]
-            ]
-            );
-        return back();
+            ] );
+        }
+        if(count($errors)>0)
+            return back()->with(compact('errors'));
+        $notificacion = 'Los cambios se han guardado con exito.';
+        return back()->with(compact('notificacion'));
 
     }
 }

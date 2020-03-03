@@ -25,8 +25,15 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'pivot'
     ];
+
+    /// una usuario se asocia con multiples especialidades
+    public function specialties()
+    {
+        return $this->belongsToMany(Specialty::class)->withTimestamps();
+    }
+
     // scope para migrar filtrar desded el modelo 
     public function scopePatients($query)
     {

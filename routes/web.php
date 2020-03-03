@@ -33,3 +33,13 @@ Route::middleware(['auth', 'doctor'])->namespace('Doctor')->group(function(){
 
 
 });
+
+Route::middleware('auth')->group(function(){
+    //Rutas para las citas
+    Route::get('/appointments/create', 'AppointmentController@create');
+    Route::post('/appointments', 'AppointmentController@store');
+    //JSON
+    Route::get('/specialties/{specialty}/doctors', 'Api\SpecialtyController@doctors');
+});
+
+ 

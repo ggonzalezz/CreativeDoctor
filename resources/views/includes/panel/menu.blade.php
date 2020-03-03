@@ -44,12 +44,12 @@
     </li>
     @else 
     <li class="nav-item">
-        <a class="nav-link" href="/home">
+        <a class="nav-link" href="/appointments/create">
             <i class="ni ni-watch-time text-primary"></i> Reservar Citas
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/specialties">
+        <a class="nav-link" href="/appointments">
             <i class="fa fa-list text-orange"></i> Mis Citas
         </a>
     </li>
