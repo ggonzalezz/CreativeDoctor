@@ -25,43 +25,84 @@
     
 
         
-        <form action="{{ url('patients')}}" method="POST">
+        <form action="{{ url('appointments')}}" method="POST">
             @csrf
+           
+
+
             <div class="form-group">
+                <label for="description">Descripcion</label>
+            <input type="text" class="form-control" value="{{ old('description') }}" name="description" id="description"  
+            placeholder="Describe brevemente a consulta" required>
+              </div>
+
+
+
+            <div class="form-row">
+            <div class="form-group col-md-6">
                 <label for="specialty">Especialidad</label>
-                <select name="specialty_id" id="specialty" class="form-control">
+                <select name="specialty_id" id="specialty" class="form-control" required>
+                    <option value="" required>Seleccione una especialidad</option>
                     @foreach ($specialties as $specialty)
-                         <option value="{{$specialty->id}}">{{$specialty->name}}</option>
+                         <option value="{{$specialty->id}}" @if(old('specialty_id') == $specialty->id) 
+                            selected @endif>{{$specialty->name}}</option>
                     @endforeach
                 </select>
             </div>
-            <div class="form-group">
+            <div class="form-group col-md-6">
                 <label for="email">Medico</label>
-                <select name="doctor_id" id="doctor" class="form-control">
-
+                <select name="doctor_id" id="doctor" class="form-control" required>
+                    @foreach ($doctors as $doctor)
+                        <option value="{{$doctor->id}}" @if(old('doctor_id') == $doctor->id) 
+                        selected @endif>{{$doctor->name}}</option>
+                     @endforeach
                 </select>
             </div>
+        </div>
+            <h5>Por favor recervar citas 24 horas antes</h5>
             <div class="form-group">
                 <label for="dni">Fecha</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
                     </div>
-                    <input class="form-control datepicker" placeholder="Selecciones una fecha" type="text" value="06/20/2020">
+                <input class="form-control datepicker" placeholder="Selecciones una fecha" 
+                id="date" type="text"  name="scheduled_date"
+                value="{{ old('scheduled_date', date('Y-m-d'))}}"
+                data-date-format="yyyy-mm-dd" 
+                data-date-start-date="{{date('Y-m-d')}}" 
+                data-date-end-date="+15d">
                 </div>
+                
             </div>
+            
+            
             <div class="form-group">
-                <label for="address">Direccion</label>
-                <input type="text" name="address" class="form-control" value="{{ old('address') }}">
+                <label for="address">Atención al Cliente</label>
+                <div id="hours">
+                    <div class="alert alert-success" role="alert">
+                        <strong>Seleccione !</strong> Una especialidad y despues un medico
+                        </div>
+                </div>
             </div>
             
             <div class="form-group">
-                <label for="phone">Telefono o Cel</label>
-                <input type="text" name="phone" class="form-control" value="{{ old('phone') }}">
-            </div>
-            <div class="form-group">
-                <label for="phone">Contrasenia</label>
-                <input type="text" name="password" class="form-control" value="{{ str_random(8) }}">
+                <label for="type"></label>
+                <div class="custom-control custom-radio mb-3">
+                    <input type="radio" name="type" class="custom-control-input" id="type1" 
+                    @if(old('type', 'Consulta') =='Consulta') checked @endif value="Consulta">
+                  <label class="custom-control-label" for="type1">Consulta </label>
+                </div>
+                <div class="custom-control custom-radio mb-3">
+                    <input name="type" type="radio" class="custom-control-input" id="type2" 
+                    @if(old('type')=='Examen') checked @endif value="Examen">
+                  <label class="custom-control-label" for="type2">Examen </label>
+                </div>
+                <div class="custom-control custom-radio mb-3">
+                    <input name="type" type="radio" class="custom-control-input" id="type3" 
+                    @if(old('type')=='Operación') checked @endif value="Operación">
+                  <label class="custom-control-label" for="type3">Operación </label>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary">Guardar</button>
         </form>
@@ -70,29 +111,7 @@
 @endsection
 @section('scripts')
     <script src="{{asset('/vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}"></script>
-    <script>
-        let $doctor;
-        $(function (){
-            const $specialty = $('#specialty');
-            $doctor = $('#doctor');
-
-            $specialty.change(()=>{
-            const specialtyId = $specialty.val();
-            const url = `/specialties/${specialtyId}/doctors`;
-            $.getJSON(url, onDoctorsLoad);
-             });
-        });
-        
-        function onDoctorsLoad(doctors){
-            let htmlOptions = '';
-           doctors.forEach(doctor => {
-               //console.log(`${doctor.id} - ${doctor.name} `);
-               htmlOptions += `<option value="${doctor.id}">${doctor.name}</option>`;
-           });
-           $doctor.html(htmlOptions);
-        }
-        
-    </script>
+<script src="{{ asset('/js/appointments/create.js')}}"></script>
 @endsection
 
 <!--ctrl alt f-->

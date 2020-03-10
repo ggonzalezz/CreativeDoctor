@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Specialty;
+use App\User;
 class SpecialtiesTableSeeder extends Seeder
 {
     /**
@@ -12,16 +13,21 @@ class SpecialtiesTableSeeder extends Seeder
     public function run()
     {
         $specialties =[
-            'Dermatologia',
-            'Pediatria',
-            'Neurologia',
-            'Odontologia'
+            'Dermatología',
+            'Pediatría',
+            'Neurología',
+            'Odontología'
         ];
-        foreach($specialties as $specialty)
+        foreach($specialties as $specialtyName)
         {
-            Specialty::create([
-                'name' => $specialty
+            $specialty = Specialty::create([
+                'name' => $specialtyName
             ]);
+            $specialty->users()->saveMany(
+                factory(User::class, 3)->states('doctor')->make()
+            );
         }
+        // Medico id 3
+        User::find(2)->specialties()->save($specialty);
     }
 }

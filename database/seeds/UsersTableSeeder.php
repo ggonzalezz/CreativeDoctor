@@ -40,7 +40,7 @@ class UsersTableSeeder extends Seeder
         'phone' => '',
         'role' => 'patient'
         ]);
-        factory(User::class, 50)->create();
+        factory(User::class, 50)->states('patient')->create();
         
     }
 }

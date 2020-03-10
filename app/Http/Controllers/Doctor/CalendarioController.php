@@ -22,18 +22,29 @@ class CalendarioController extends Controller
     //
     public function edit()
     {
-        
         $workDays = WorkDay::where('user_id', auth()->id())->get();
         //dd($workDays->toArray());
-        $workDays->map(function($workDay)
+        if(count($workDays)> 0)
         {
-            $workDay->morning_start =(new Carbon($workDay->morning_start))->format('g:i A');
-            $workDay->morning_end =(new Carbon($workDay->morning_end))->format('g:i A');
-            $workDay->afternoon_start =(new Carbon($workDay->afternoon_start))->format('g:i A');
-            $workDay->afternoon_end =(new Carbon($workDay->afternoon_end))->format('g:i A');
+            $workDays->map(function($workDay)
+            {
+                $workDay->morning_start =(new Carbon($workDay->morning_start))->format('g:i A');
+                $workDay->morning_end =(new Carbon($workDay->morning_end))->format('g:i A');
+                $workDay->afternoon_start =(new Carbon($workDay->afternoon_start))->format('g:i A');
+                $workDay->afternoon_end =(new Carbon($workDay->afternoon_end))->format('g:i A');
+    
+                return $workDay;
+            });
 
-            return $workDay;
-        });
+        }else
+        // llenar con valores que no vienen de la db
+        {
+            $workDays = collect();
+            for($i=0; $i<7; ++$i)
+                $workDays->push(new WorkDay());
+        }
+        
+       
         $days = $this->days;
         //dd($workDays->toArray());
         return view('calendario', compact('workDays','days'));
@@ -55,7 +66,7 @@ class CalendarioController extends Controller
         {
             $errors[]= 'Las horas del turno de la mañana afectan el dia '. $this->days[$i];
         }
-        if($morning_start[$i] > $morning_end[$i])
+        if($afternoon_start[$i] > $afternoon_end[$i])
         {
             $errors[]= 'Las horas del turno de la tarde afectan el dia '. $this->days[$i];
         }
