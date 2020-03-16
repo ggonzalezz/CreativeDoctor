@@ -1,9 +1,9 @@
-<?php
+<?php 
 
 namespace App\Providers;
-
 use Illuminate\Support\ServiceProvider;
-
+use App\Interfaces\ScheduleServiceInterface;
+use App\Services\ScheduleService;
 class ScheduleServiceProvider extends ServiceProvider
 {
     /**
@@ -13,7 +13,7 @@ class ScheduleServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(ScheduleServiceInterface::class, ScheduleService::class);
     }
 
     /**

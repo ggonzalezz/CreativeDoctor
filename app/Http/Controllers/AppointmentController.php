@@ -1,15 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\Specialty;
 use App\Appointment;
 use Carbon\Carbon;
+use App\Interfaces\ScheduleServiceInterface;
 class AppointmentController extends Controller
 {
     //
-    public function create()
+    public function create(ScheduleServiceInterface $scheduleService)
     {
         $specialties = Specialty::all();
 
@@ -22,16 +22,18 @@ class AppointmentController extends Controller
         else{
             $doctors = collect();
         }
-        /*
-        $scheduleDate = old('scheduled_date');
+        
+        $date = old('scheduled_date');
         $doctorId = old('doctor_id');
-        if($scheduleDate && $doctorId)
+        if($date && $doctorId)
         {
-           // $times =;
+            $intervals = $scheduleService->getAvalibleIntervals($date, $doctorId);
+        }else
+        {
+            $intervals = null;
         }
-        */
-
-        return view('appointments.create', compact('specialties', 'doctors'));
+        
+        return view('appointments.create', compact('specialties', 'doctors', 'intervals'));
     }
     
     public function store(Request $request)

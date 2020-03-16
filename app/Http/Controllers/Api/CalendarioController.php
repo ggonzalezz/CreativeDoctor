@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Interfaces\ScheduleServiceInterface;
 use App\WorkDay;
 use Carbon\Carbon;
 class CalendarioController extends Controller
 {
     //
-    public function horas(Request $request)
+    public function horas(Request $request, ScheduleServiceInterface $scheduleService)
     {
         //dd($request->all());
         $rules = [
@@ -17,42 +18,14 @@ class CalendarioController extends Controller
             'doctor_id' => 'required|exists:users,id'
         ];
         $this->validate($request, $rules);
-
         $date = $request->input('date');
-        $dateCarbon = new Carbon($date);
-
-        $i = $dateCarbon->dayOfWeek;
-        $day = ($i==0 ? 6 : $i-1);
-        //dd($day);
         $doctorId = $request->input('doctor_id');
 
-        $workDay = WorkDay::where('active', true)
-            ->where('day', $day)
-            ->where('user_id', $doctorId)
-            ->first(
-                [
-                    'morning_start', 
-                    'morning_end',
-                    'afternoon_start',
-                    'afternoon_end'
-                ]);
+        return $scheduleService->getAvalibleIntervals($date,$doctorId);
         
-        if(!$workDay)
-        {
-            return [];
-        }
-        
-        $morningIntervals = $this->getIntervals($workDay->morning_start,$workDay->morning_end);
-
-        $afternoonIntervals = $this->getIntervals($workDay->afternoon_start,$workDay->afternoon_end);
-
-        //dd($morningIntervals);
-        $data =[];
-        $data['morning'] = $morningIntervals;
-        $data['afternoon'] = $afternoonIntervals;
-        return $data;
     }
-    private function getIntervals($start, $end)
+   /*
+     private function getIntervals($start, $end)
     {
         $start = new Carbon($start);
         $end = new Carbon($end);
@@ -71,4 +44,6 @@ class CalendarioController extends Controller
         return $intervals;
 
     }
+
+   */
 }
