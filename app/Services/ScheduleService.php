@@ -8,14 +8,14 @@ use App\Appointment;
 
 class ScheduleService implements ScheduleServiceInterface
 {
-    private function getDayFromDate($date)
+    public function isAvalibleInterval($date, $doctorId, Carbon $start)
     {
-        
-        $dateCarbon = new Carbon($date);
-        $i = $dateCarbon->dayOfWeek;
-        $day = ($i==0 ? 6 : $i-1);
-
-        return $day;
+        $exists = Appointment::where('doctor_id',$doctorId)
+        ->where('scheduled_date', $date )
+        ->where('scheduled_time', $start->format('H:i:s'))
+        ->exists();
+        return !$exists; // retornara lo si no existe una fecha reservada
+        //para esa fecha con ese doctor 
     }
     public function getAvalibleIntervals($date, $doctorId)
     {
@@ -52,6 +52,16 @@ class ScheduleService implements ScheduleServiceInterface
 
         return $data;
     }
+    private function getDayFromDate($date)
+    {
+        
+        $dateCarbon = new Carbon($date);
+        $i = $dateCarbon->dayOfWeek;
+        $day = ($i==0 ? 6 : $i-1);
+
+        return $day;
+    }
+  
     private function getIntervals($start, $end, $date, $doctorId)
     {
         $start = new Carbon($start);
@@ -63,16 +73,13 @@ class ScheduleService implements ScheduleServiceInterface
             $interval = [];
             $interval['start'] = $start->format('g:i A');
              // si no existe una cita para este medico agragarlo al arreglo
-             $exists = Appointment::where('doctor_id',$doctorId)
-             ->where('scheduled_date', $date )
-             ->where('scheduled_time', $start->format('H:i:s'))
-             ->exists();
+             $disponible = $this->isAvalibleInterval($date, $doctorId,$start);
 
             $start->addMinutes(30);
             $interval['end'] = $start->format('g:i A');
            
             //dd($exists);
-            if(!$exists)
+            if($disponible)
             {
                 $intervals [] = $interval;
             }
